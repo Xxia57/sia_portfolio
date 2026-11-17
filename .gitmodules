@@ -1,0 +1,6 @@
+[submodule "projects/overnight-briefing"]
+	path = projects/overnight-briefing
+	url = https://github.com/minseokgeum/ai_campus_main_proj.git
+[submodule "projects/myhome-loan"]
+	path = projects/myhome-loan
+	url = https://github.com/AX-LAB-J/myhome-loan-ai.git
