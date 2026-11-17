@@ -5,6 +5,12 @@
 
 한국 투자자에게 **밤사이 미국 뉴스 중 보유 종목과 관련된 것**을 골라 보여 주는 서비스. DART 공시와 미국 뉴스로 국내 기업–해외 기업·제품을 잇는 그래프 DB를 만들고, 그래프에서 종목마다 구글 뉴스 검색어를 만든다. 결정 사항과 근거는 [`graph_db/graphDB.md`](graph_db/graphDB.md)(요약: [`graphDB_summary.md`](graph_db/graphDB_summary.md))에 있다.
 
+**유시아가 맡은 작업**
+
+- **금융 뉴스 수집·정제** · 매체별 RSS·Atom 피드를 점검하고, 신규 기사 식별부터 원문 추출·정제·저장까지 반복 실행하는 Python 수집 코드 정리에 참여했습니다. RSS 요약과 정제 본문을 별도로 저장하고, 영상·라이브 기사, 구독 제한, 추출 실패를 구분해 본문 검토에 활용했습니다. 기사 키워드가 금융 이슈와 연결되는 근거는 기사 원문과 대조했습니다. [수집 코드와 인수인계 문서](news_source_tests/team_rss_news/docs/RSS_HANDOFF.md)
+- **종목·테마 매핑** · WI26 업종 분류에 더해 종목별로 관련 사업·제품·기술을 조사하고, 토스증권 세부 분류를 상위 테마에 매핑했습니다. 종목별 뉴스 검색에 활용할 수 있도록 원본 분류와 상위 테마의 대응 관계를 JSON으로 구성했습니다. [종목 분류 자료](market_data/README.txt)
+- **야간선물·회귀모형 검증** · 한국투자증권 API의 일봉·1분봉 응답을 비교해 과거 시세 확보 범위를 확인했고, 세션별 분봉 집계값과 일봉의 가격·거래량을 대조하는 검증에 참여했습니다. WI26 OLS 재현 검증과 확장형 시계열 평가에서는 기준모형과 금융지표 추가 모형의 이후 구간 MSE를 비교해 오차가 줄어든 조건과 한계를 확인했습니다. [야간선물 검증](analysis/kis-data-review/validation-summary.md) · [WI26 검증](analysis/wi26-validation/review.md)
+
 ## 폴더
 
 | 폴더 | 내용 |
@@ -25,29 +31,11 @@
 2. **비밀값**: `.env.example`을 프로젝트 루트에 `.env`로 복사해 값을 채운다. `.env`는 git에 올리지 않는다.
 3. **Codex CLI**(일부 LLM 단계를 구독으로 돌린다): 설치 후 `codex login`. 노트북은 모델을 직접 지정한다(`gpt-6.1-terra`, 일부 `gpt-6.1-sol`).
 4. **Neo4j**: 로컬 Docker(`neo4j-graph`, 7474·7687 포트). 주소·계정은 `.env`.
-5. **데이터**: git에는 코드·문서와 기준 자료만 있다. 중간·결과 데이터는 아래 "데이터 받기"에서 받는다.
+5. **데이터**: 작업별 입력 범위는 아래 ‘데이터 범위’를 참고하세요.
 
-## 데이터 받기 (팀 구글 드라이브)
+## 데이터 범위
 
-DART·뉴스 자료와 그것으로 만든 중간·결과 파일은 법적 문제와 용량 때문에 git에 올리지 않고 **팀 구글 드라이브**에 날짜를 붙인 묶음(zip)으로 둔다. 드라이브에는 **묶음마다 최신 파일 하나만** 둔다(이름 끝의 날짜로 언제 만든 것인지 안다). 드라이브는 팀원 계정만 열 수 있다(공유: 제한됨).
-
-- 주소: [ai_campus_main_proj_data](https://drive.google.com/drive/folders/1oj6OMBNftt-muaeQL5bmanKTefMR3Ge6?usp=sharing)
-- **받는 법**(명령 하나): 드라이브에서 필요한 묶음(zip)을 내려받아 **압축을 풀지 말고** `~/Downloads`(또는 `~/Downloads/ai_campus_main_proj_data`)에 둔 뒤, 저장소 루트에서 실행한다.
-
-  ```
-  python scripts/data_bundle.py place
-  ```
-  두 폴더에서 묶음 이름(`<묶음>_<날짜>.zip`)인 파일을 찾아 **묶음마다 가장 최근 날짜 것만** 저장소 기준 경로 그대로 제자리에 푼다. **이미 있는 파일은 내용이 다르면 묶음의 것으로 바꾸고**, 같으면 건너뛴다. 파일 목록(크기·SHA-256)으로 빠짐없이 들어갔는지 확인한다. 다른 곳에 둔 zip은 경로를 직접 준다: `python scripts/data_bundle.py place 경로/graph_data_20261116.zip`.
-- **올리는 법**: `python scripts/data_bundle.py pack`(기본 저장 위치 `~/Downloads/ai_campus_main_proj_data/`, 일부만은 `--only graph_data,news_search_data`)으로 만든 묶음을 드라이브 폴더(하위 폴더 없이 한 곳)에 올리고, **드라이브에 있던 같은 묶음의 옛 날짜 파일은 지운다**. 아래 표의 날짜·크기도 고친다. `pack`은 같은 날 다시 만들면 덮어쓰고, 저장 위치에 있던 같은 묶음의 옛 날짜 zip은 지운다(저장 위치가 늘 드라이브에 올릴 최신 묶음과 같게). 작업 전에 로컬에 만든 백업 폴더(이름이 `backup_`으로 시작)는 묶음에 넣지 않는다. 묶음 종류와 지금 로컬 용량은 `python scripts/data_bundle.py list`.
-
-| 묶음 | 최신 날짜 | 크기(압축) | 담긴 것 | 언제 필요한가 |
-|---|---|---|---|---|
-| `graph_data` | 2026-11-17 | 154MB | `graph_db/source`에서 DART 원문과 로컬 백업 폴더(`backup_`로 시작)를 뺀 것(파일 5,630개, 552MB, 대상 951개 기준): DART 파싱 표·사업의 내용, 뉴스(거르기·LLM 응답·최종본·DB 스냅샷), 이름 통일·제품 사전·LLM 제품 사전·검색어 결과, Neo4j 표, 대상 기업 | 대부분. 앞 단계를 다시 돌리지 않고 원하는 단계부터 이어서 돌릴 때 |
-| `dart_raw` | 2026-11-17 | 510MB | DART 원문 다운로드(`graph_db/source/dart/raw`, 파일 18,178개) | DART 파싱부터 다시 돌릴 때만(없으면 `dart_collector`로 다시 받는다) |
-| `news_search_data` | 2026-11-17 | 131MB | 밤사이 뉴스(`news_search/source`, 파일 11,371개): 보고 날짜별 수집 기사·응답 원본·처리 결과(`prompt_inputs.jsonl`), 임시 검색어 표(`terms/`), 임베딩·원문 페이지 캐시, 지난 묶음 기록(이전 소식 확인용) | 수집·처리를 이어서 돌리거나 지난밤 결과·프롬프트 입력을 볼 때 |
-| `news_tests` | 2026-11-17 | 286MB | 뉴스 매체 시험(`news_source_tests`)과 구글 뉴스 검색 방식 시험(`news_search_tests/source`)의 결과와 캐시(파일 4,456개) | 시험 노트북을 요청 없이 다시 볼 때만 |
-| `backtest_data` | 2026-11-17 | 69MB | 백테스트 캐시와 결과(`backtest/data`: KRX API 캐시·분봉 캐시·야후 분봉, `backtest/outputs`, 파일 1,210개) | 백테스트 노트북을 API 요청 없이 다시 돌릴 때 |
-| `creon_1min` | 2026-11-17 | 6.5GB | 크레온 KRX 1분봉(`stockdata_collection/creon_1min`: 전체 종목 스냅샷·반도체 15종목·조회 범위 점검, 파일 6,328개) | 분봉 백테스트. 크레온으로 다시 받으려면 하루 넘게 걸린다 |
+이 저장소에서 공개 코드와 문서, 기준 자료를 확인할 수 있습니다. 원천 기사와 대용량 시세 데이터가 필요한 작업은 별도의 입력 데이터가 있어야 실행할 수 있습니다.
 
 ## 실행 순서 (graph_db)
 
@@ -61,8 +49,8 @@ DART·뉴스 자료와 그것으로 만든 중간·결과 파일은 법적 문�
 | 4 | `dart_business_parser` | 사업의 내용 → LLM 입력 | | | 없음 |
 | 5 | `dart_business_extractor` | 사업의 내용 LLM 추출 | `OPENAI_API_KEY` 또는 Codex | `RUN`, `RUNNER` | 배치 API 약 $15~20 |
 | 6 | `dart_business_cleaner` | DART 최종본 | | | 없음 |
-| 7 | `news_collector` | 미국 뉴스 상시 수집(윈도우 PC에서 계속 돈다) | `NEWS_DB_URL`, 알림 키 | `REQUIRE_MYSQL`, `RUN_FOREVER` | 언론사 RSS(무료) |
-| 8 | `news_filter` | 뉴스가 아닌 글 거르기 | `NEWS_DB_READ_URL`(안 되면 `source/news/snapshot_*`) | | 없음 |
+| 7 | `news_collector` | 미국 경제 매체와 업종 전문지 RSS를 주기적으로 조회하고, 정규화한 URL로 신규 기사와 본문 변경을 식별해 제목·발행 시각·RSS 요약·본문을 저장 | `NEWS_DB_URL`, 알림 키 | `REQUIRE_MYSQL`, `RUN_FOREVER` | 언론사 RSS(무료) |
+| 8 | `news_filter` | URL·분류 태그·제목으로 광고, 영상·라이브 페이지, 중복 등을 판별하고, 원본을 보존한 채 본문 사용·RSS 요약 사용·제외로 표시해 관계 추출용 입력을 구성 | `NEWS_DB_READ_URL`(안 되면 `source/news/snapshot_*`) | | 없음 |
 | 9 | `news_extractor` | 뉴스 LLM 추출 | `OPENAI_API_KEY` 또는 Codex | `RUN`, `RUNNER` | 배치 API 기사당 약 $0.006 |
 | 10 | `news_cleaner` | 뉴스 최종본 | | | 없음 |
 | 11 | `name_unifier` | 기업 이름 통일 | | | 없음 |
@@ -83,4 +71,3 @@ DART·뉴스 자료와 그것으로 만든 중간·결과 파일은 법적 문�
 - 결정은 그래프 DB·검색어 만들기는 `graph_db/graphDB.md`, 뉴스 검색·밤사이 처리는 `news_search/news_search.md`에 적는다(정한 것은 본문, 정할 것은 "결정할 것").
 - 외부 요청(웹, LLM API)을 보내는 실행은 예상 건수·시간·비용을 먼저 알리고 승인받는다.
 - 새 패키지를 쓰면 `requirements.txt`, 새 키를 쓰면 `.env.example`에 더한다.
-- git에 올리는 데이터는 사람이 받아 오거나 만든 기준 자료뿐이다. 코드가 만든 파일은 폴더별 `.gitignore`로 막고 팀 드라이브로 공유한다(`scripts/data_bundle.py`). 새 데이터 폴더를 만들면 `scripts/data_bundle.py`의 묶음 목록(`BUNDLES`)에 넣을지 정한다.
