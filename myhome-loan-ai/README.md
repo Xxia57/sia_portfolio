@@ -146,7 +146,7 @@ project_side/
 
 ## 데이터 준비·검증
 
-분석 단계에서는 고객 ID를 기준으로 주택 구매 데이터 42,225행에 지역 정보 5개 항목을 병합하고, 매칭 누락 없이 기존 값과 행 순서가 유지되는지 확인했습니다. 주택 구매와 연결된 대출의 최초 원금과 현재 잔액을 구분했으며, 무대출 사례의 상환액은 0원으로 처리하고 적용 대상이 없는 금리와 만기는 결측값으로 유지했습니다. [데이터 결합 검증](analysis/preprocessing/data-lineage.md) · [지역 정보 병합 노트북](analysis/preprocessing/region-merge.ipynb)
+분석 단계에서는 고객 ID를 기준으로 주택 구매 데이터 42,225행에 지역 정보 5개 항목을 병합하고, 매칭 누락 없이 기존 값과 행 순서가 유지되는지 확인했습니다. 주택 구매와 연결된 대출의 최초 원금과 현재 잔액을 구분했으며, 무대출 사례의 상환액은 0원으로 처리하고 적용 대상이 없는 금리와 만기는 결측값으로 유지했습니다. [데이터 결합 검증](analysis/preprocessing/data-lineage.md) · [전처리·검증 최종 노트북](analysis/preprocessing/preprocessing-validation.ipynb)
 
 CSV를 바꿀 때는 `data/raw/`에 넣고 앱을 끈 뒤 실행합니다. 학습 모델은 `scripts.train`을 실행할 때만 바뀝니다.
 
