@@ -5,12 +5,6 @@
 
 한국 투자자에게 **밤사이 미국 뉴스 중 보유 종목과 관련된 것**을 골라 보여 주는 서비스. DART 공시와 미국 뉴스로 국내 기업–해외 기업·제품을 잇는 그래프 DB를 만들고, 그래프에서 종목마다 구글 뉴스 검색어를 만든다. 결정 사항과 근거는 [`graph_db/graphDB.md`](graph_db/graphDB.md)(요약: [`graphDB_summary.md`](graph_db/graphDB_summary.md))에 있다.
 
-**유시아가 맡은 작업**
-
-- **금융 뉴스 수집·정제** · 매체별 RSS·Atom 피드를 점검하고, 신규 기사 식별부터 원문 추출·정제·저장까지 반복 실행하는 Python 수집 코드 정리에 참여했습니다. RSS 요약과 정제 본문을 별도로 저장하고, 영상·라이브 기사, 구독 제한, 추출 실패를 구분해 본문 검토에 활용했습니다. 기사 키워드가 금융 이슈와 연결되는 근거는 기사 원문과 대조했습니다. [수집 코드와 인수인계 문서](news_source_tests/team_rss_news/docs/RSS_HANDOFF.md)
-- **종목·테마 매핑** · WI26 업종 분류에 더해 종목별로 관련 사업·제품·기술을 조사하고, 토스증권 세부 분류를 상위 테마에 매핑했습니다. 종목별 뉴스 검색에 활용할 수 있도록 원본 분류와 상위 테마의 대응 관계를 JSON으로 구성했습니다. [종목 분류 자료](market_data/README.txt)
-- **야간선물·회귀모형 검증** · 한국투자증권 API의 일봉·1분봉 응답을 비교해 과거 시세 확보 범위를 확인했고, 세션별 분봉 집계값과 일봉의 가격·거래량을 대조하는 검증에 참여했습니다. WI26 OLS 재현 검증과 확장형 시계열 평가에서는 기준모형과 금융지표 추가 모형의 이후 구간 MSE를 비교해 오차가 줄어든 조건과 한계를 확인했습니다. [야간선물 검증](analysis/kis-data-review/validation-summary.md) · [WI26 검증](analysis/wi26-validation/review.md)
-
 ## 폴더
 
 | 폴더 | 내용 |
@@ -18,7 +12,7 @@
 | `graph_db/` | 그래프 DB 만들기: DART·뉴스 수집과 LLM 추출, 이름 통일, 제품 사전, Neo4j 적재, 검색어 만들기. 노트북과 `graphDB.md`, 지시문(`prompts/`) |
 | `news_search/` | 밤사이 기사 모으기: 검색어로 구글 뉴스 RSS 검색, 거르기, 같은 소식 묶기, 대표 기사 본문 받기, 프롬프트 입력. 24시간 수집 `news_collect.ipynb`, 수집 마감 뒤 처리 `news_process.ipynb`(사용자가 고른 표시 시각 30분 전에 한 번). 결정은 [`news_search.md`](news_search/news_search.md) |
 | `news_search_tests/` | 구글 뉴스 검색 방식 시험(`search_tests.ipynb`: 매체, OR 묶음, 기간 조건, 거르기, 검색어 모양). 서비스 실행에는 필요 없음 |
-| `news_source_tests/` | 뉴스 매체·수집 방식을 정할 때 한 시험(근거 보관). [README](news_source_tests/README.md) |
+| `news_source_tests/` | 매체별 RSS·Atom 피드 점검 및 본문 추출·정제 시험. RSS 요약과 정제 본문을 구분해 저장하고, 영상·라이브 콘텐츠, 구독 제한, 본문 추출 실패를 상태별로 기록. [RSS 통합 수집·정제 안내](news_source_tests/team_rss_news/docs/RSS_HANDOFF.md) |
 | `graph_news_overview.md` | **처음 보는 팀원용 안내**: 그래프 DB, 검색어, 구글 뉴스 수집·처리가 무엇을 만들고 어떻게 도는지, 결과 위치와 첫 실전 결과 |
 | `nightly_prompt_requirements.md` | 밤사이 뉴스 프롬프트를 만드는 팀원에게 전하는 요구사항(입력·출력, 유형 분류, 그래프용 추출 형식, 실행 조건, 시험 방법) |
 | `scripts/` | 보조 스크립트: 데이터 묶음 만들기·풀기(`data_bundle.py`) |
