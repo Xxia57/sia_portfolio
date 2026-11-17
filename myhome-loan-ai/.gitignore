@@ -1,0 +1,25 @@
+.venv/
+side/
+.env
+.env.*
+!.env.example
+data/
+models/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+logs/
+*.egg-info/
+build/
+dist/
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+*.log
+tmp/
+/cloudflared.exe
+
+# Legacy code and files kept locally only
+archive/
